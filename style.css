@@ -1,0 +1,22 @@
+.modal{
+    background-color: #e0e0e0;
+    width: 500px;
+    padding: 16px;
+}
+.modal-header{
+    display: flex;
+    justify-content: space-between;
+}
+.modal-title{
+    line-height: 6px;
+    font-size: large;
+}
+.modal-body{
+    display: flex;
+    flex-direction: column;
+}
+
+input{
+    width:80%;
+    padding: 12px;
+}
