@@ -6,15 +6,14 @@ $(document).ready(function() {
         "dataSrc":  ""
       },
       columns: [
-        { data: 'id' , class: 'editable text' },
-        { data: 'name', class: 'editable text' },
-        { data: 'language', class: 'editable text' },
-        { data: 'version',class: 'editable text' },
+        { data: 'id'},
+        { data: 'name' },
+        { data: 'language'},
+        { data: 'version' },
         {
           "data": null,
           "render": function(data, type, row) {
-                    return'<button id="edit-btn" onclick="editRecord(' + row.id + ')">Edit</button>'+
-                    '<button id="delete-btn" onclick="deleteRecord(' + row.id + ')">Delete</button>';
+                    return'<button id="delete-btn" onclick="deleteRecord(' + row.id + ')">Delete</button>';
           }
         }
       ]
@@ -28,6 +27,23 @@ $(document).ready(function() {
       .draw();
     });
      
-    
+    $('#myTable tbody').on('click', 'td', function () {
+      var cell = table.cell(this);
+      var columnIndex = cell.index().column;
+      var rowIndex = cell.index().row;
 
+      // Check if the clicked cell is editable (modify this condition based on your needs)
+      if (columnIndex !== 0) { // Example: Allow editing all columns except the first one (ID)
+          var currentData = cell.data();
+          var inputType = columnIndex === 3 ? 'number' : 'text'; // Assuming the last column is numeric
+
+          cell.data('<input type="' + inputType + '" class="inline-edit" value="' + currentData + '">').draw();
+
+          // Focus on the input field and bind blur event
+          $('.inline-edit').focus().blur(function () {
+              var newValue = $(this).val();
+              cell.data(newValue).draw();
+          });
+      }
   });
+});
