@@ -7,10 +7,10 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/v/dt/jqc-1.12.4/dt-1.13.6/b-2.4.2/sl-1.7.0/datatables.min.css"/>
-    <script src="Editor-2.2.2/js/dataTables.editor.js"></script>
     <script>
         $(document).ready(function(){
             $("#myTable").dataTable();
@@ -18,7 +18,8 @@
     </script>
 </head>
 <body>
-    <table id="myTable" class="table-responsive">
+    <br/>
+    <table id="myTable" class="table-responsive display">
         <thead>
             <tr>
                 <th>Id</th>
@@ -30,6 +31,26 @@
         </thead>
         <tbody></tbody>
     </table>
+
+    <button id="addRowBtn">Add New Row</button>
+
+<div id="dialog-form" title="Add New Row">
+    
+    <form id="addRowForm" >
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br>
+        
+        <label for="language">Language:</label>
+        <input type="text" id="language" name="language" required><br>
+        
+        <label for="version">Version:</label>
+        <input type="number" id="version" name="version" required><br>
+        
+        <!-- <input type="submit" value="Add Row"> -->
+    </form>
+</div>
+
+
 
   
 </body>
