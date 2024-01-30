@@ -1,4 +1,6 @@
 $(document).ready(function() {
+
+  //Reading Data from json file
     $('#myTable').DataTable({
       "ajax": {
         "url": "data.json", 
@@ -18,7 +20,10 @@ $(document).ready(function() {
         }
       ]
     });
+   
 
+    
+    //Delete operation on table
     var table = $('#myTable').DataTable();
     $('#myTable tbody').on( 'click', '#delete-btn', function () {
      
@@ -86,29 +91,77 @@ $(document).ready(function() {
             };
 
             table.row.add(newRowData).draw();
+
         }
 
-        $('#myTable tbody').on('click', 'td', function () {
-          var cell = table.cell(this);
-          var columnIndex = cell.index().column;
-          var rowIndex = cell.index().row;
+        //Edit the rows inline
+        // $('#myTable tbody').on('dblclick', 'td', function () {
+        //   var cell = table.cell(this);
+        //   var columnIndex = cell.index().column;
+        //   var rowIndex = cell.index().row;
     
-          // if (columnIndex !== 0) { //Allow editing all columns except the first one (ID)
-              var currentData = cell.data();
-              var inputType = columnIndex === 3 ? 'number' : 'text'; // Assuming the last column is numeric
+        //   if (columnIndex !== 0) { //Allow editing all columns except the first one (ID)
+        //       var currentData = cell.data();
+        //       var inputType = columnIndex === 3 ? 'number' : 'text'; // Assuming the last column is numeric
     
-              cell.data('<input type="' + inputType + '" class="inline-edit" value="' + currentData + '">').draw();
+        //       cell.data('<input type="' + inputType + '" class="inline-edit" value="' + currentData + '">').draw();
     
-              // Focus on the input field and bind blur event
-              $('.inline-edit').focus().blur(function () {
-                var newValue = $(this).val();
-                let text = "Are you sure you want to edit this row?";
-                  if (confirm(text) == true) {
-                    cell.data(newValue).draw();
-               } else {
-               alert("You canceled!");
-                }
+        //       // Focus on the input field and bind blur event
+        //       $('.inline-edit').focus().blur(function () {
+        //         var newValue = $(this).val();
+        //         let text = "Are you sure you want to edit this row?";
+        //           if (confirm(text) == true) {
+        //             cell.data(newValue).draw();
+        //        } else {
+        //        alert("You canceled!");
+        //        }
                  
-              });
+        //       });
+        //     }
+        //     });
+
+
+        // Inline editing
+          $('#myTable tbody').on('dblclick', 'td:not(:first-child)', function() {
+            var cell = table.cell(this);
+            var columnIndex = cell.index().column;
+            var rowIndex = cell.index().row;
+
+            var currentData = cell.data();
+            var inputType = columnIndex === 3 ? 'number' : 'text';
+
+            var cellIdentifier = 'cell-' + rowIndex + '-' + columnIndex;
+
+            cell.data('<input type="' + inputType + '" class="inline-edit" data-cell-id="' + cellIdentifier + '" value="' + currentData + '">').draw();
+
+            var $inputField = $('.inline-edit[data-cell-id="' + cellIdentifier + '"]');
+
+            // Focus on the input field and bind blur event
+            $inputField.focus().blur(function() {
+                handleInlineEdit(cell, currentData, cellIdentifier);
             });
-  });
+
+            // Bind keypress event to detect Enter key
+            $inputField.keypress(function(event) {
+                if (event.which === 13) { // Enter key
+                    handleInlineEdit(cell, currentData, cellIdentifier);
+                }
+            });
+          });
+
+          function handleInlineEdit(cell, currentData, cellIdentifier) {
+            var newValue = $('.inline-edit[data-cell-id="' + cellIdentifier + '"]').val();
+            let text = "Are you sure you want to edit this row?";
+            if (confirm(text) == true) {
+                cell.data(newValue).draw();
+                // Update local storage with the modified data
+                updateLocalStorage();
+            } else {
+                cell.data(currentData).draw();
+            }
+          }
+
+              
+        
+
+          });
