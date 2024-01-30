@@ -1,12 +1,16 @@
 $(document).ready(function() {
 
   //Reading Data from json file
-    $('#myTable').DataTable({
-      "ajax": {
-        "url": "data.json", 
-        "type": "GET", 
-        "dataSrc":  ""
-      },
+    // $('#myTable').DataTable({
+      // "ajax": {
+      //   "url":"data.json" ,
+      //   "type": "GET", 
+      //   "dataSrc": ""
+      // },
+
+      var initialData = getStoredData() || fetchDataFromJson();
+      var table = $('#myTable').DataTable({
+        "data": initialData,
       columns: [
         { data: 'id'},
         { data: 'name' },
@@ -20,11 +24,12 @@ $(document).ready(function() {
         }
       ]
     });
+    // });
    
 
     
     //Delete operation on table
-    var table = $('#myTable').DataTable();
+    //var table = $('#myTable').DataTable();
     $('#myTable tbody').on( 'click', '#delete-btn', function () {
      
         let text = "Are you sure you want to delete this row?";
@@ -33,6 +38,7 @@ $(document).ready(function() {
           .row( $(this).parents('tr') )
           .remove()
           .draw();
+          updateLocalStorage();
         } else {
           alert("You canceled!");
         }
@@ -70,8 +76,16 @@ $(document).ready(function() {
         $("#addRowForm").submit(function (event) {
             event.preventDefault();
             addRow();
+            updateLocalStorage();
             $("#dialog-form").dialog("close");
         });
+
+         // Function to update local storage with the current DataTable data
+    function updateLocalStorage() {
+      var currentData = table.rows().data().toArray();
+      setStoredData(currentData);
+  }
+
 
         function addRow() {
             // Generate a unique ID (you may use a function to generate IDs)
@@ -91,8 +105,9 @@ $(document).ready(function() {
             };
 
             table.row.add(newRowData).draw();
-
+            updateLocalStorage();
         }
+
 
         //Edit the rows inline
         // $('#myTable tbody').on('dblclick', 'td', function () {
@@ -154,14 +169,37 @@ $(document).ready(function() {
             let text = "Are you sure you want to edit this row?";
             if (confirm(text) == true) {
                 cell.data(newValue).draw();
-                // Update local storage with the modified data
                 updateLocalStorage();
             } else {
                 cell.data(currentData).draw();
             }
           }
 
-              
-        
+
+
+          // Function to get stored data from local storage
+    function getStoredData() {
+      var storedData = localStorage.getItem('tableData');
+      return storedData ? JSON.parse(storedData) : null;
+  }
+
+  // Function to set data to local storage
+  function setStoredData(data) {
+      localStorage.setItem('tableData', JSON.stringify(data));
+  }
+
+
+          function fetchDataFromJson() {
+            var jsonData = null;
+            $.ajax({
+                url: 'data.json',
+                async: false,
+                dataType: 'json',
+                success: function (data) {
+                    jsonData = data;
+                }
+            });
+            return jsonData;
+        }
 
           });
